@@ -1,5 +1,5 @@
 
-export function calculateDiffSum(data: string): number {
+export function calculateFuncSum(data: string, f: Function): number {
     const lines: Array<string> = data.trim().split('\n');
     const firstArr: Array<number> = [];
     const secondArr: Array<number> = [];
@@ -18,27 +18,7 @@ export function calculateDiffSum(data: string): number {
         console.log(firstArr[i]);
         console.log(secondArr[i]);
 
-        const first: number = firstArr[i] > 0 ? firstArr[i] : Math.abs(firstArr[i]);
-        const second: number = secondArr[i] > 0 ? secondArr[i] : Math.abs(secondArr[i]);
-
-        let diff = 0
-        if (firstArr[i] > secondArr[i]) {
-            if (firstArr[i] > 0 && secondArr[i] > 0) {
-                diff = first - second
-            } else if (firstArr[i] < 0 && secondArr[i] < 0) {
-                diff = second - first
-            } else {
-                diff = first + second
-            }
-        } else if (secondArr[i] > firstArr[i]) {
-            if (firstArr[i] > 0 && secondArr[i] > 0) {
-                diff = second - first
-            } else if (firstArr[i] < 0 && secondArr[i] < 0) {
-                diff = first - second
-            } else {
-                diff = second + first
-            }
-        }
+        const diff = f.call(null, firstArr, secondArr, i);
 
         diffs.push(diff);
         console.log(`diff: ${diff}`);
@@ -53,8 +33,33 @@ export function calculateDiffSum(data: string): number {
     return total;
 }
 
+export function calcDiff(f: Array<number>, s: Array<number>, i: number): number {
+    const first: number = f[i] > 0 ? f[i] : Math.abs(f[i]);
+    const second: number = s[i] > 0 ? s[i] : Math.abs(s[i]);
 
-const data : string = `
+    let diff = 0
+    if (f[i] > s[i]) {
+        if (f[i] > 0 && s[i] > 0) {
+            diff = first - second
+        } else if (f[i] < 0 && s[i] < 0) {
+            diff = second - first
+        } else {
+            diff = first + second
+        }
+    } else if (s[i] > f[i]) {
+        if (f[i] > 0 && s[i] > 0) {
+            diff = second - first
+        } else if (f[i] < 0 && s[i] < 0) {
+            diff = first - second
+        } else {
+            diff = second + first
+        }
+    }
+    return diff;
+}
+
+
+export const data : string = `
 76309   75213
 79731   28444
 29583   71339
@@ -1059,6 +1064,6 @@ const data : string = `
 
 // Learn more at https://docs.deno.com/runtime/manual/examples/module_metadata#concepts
 if (import.meta.main) {
-    const result = calculateDiffSum(data)
+    const result = calculateFuncSum(data, calcDiff)
     console.log(`Result : ${result}`)
 }
